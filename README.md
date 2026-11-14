@@ -16,6 +16,8 @@ An app that tracks the field the user selects. The farmer picks a field on a map
 | [PROJECT_CONCEPT.md](PROJECT_CONCEPT.md) | Problem, challenge expectations, our idea, interface principles, data sources, rules. **Start here.** |
 | [PROJECT_SPEC.md](PROJECT_SPEC.md) | Screens, how the app works, data plan, rotation comparison, build order. *Test version, will be revised.* |
 | [SOURCES_CHECK.md](SOURCES_CHECK.md) | Results of checking every data source listed in the challenge resources |
+| [PROJECT_RISKS_AND_UI.md](PROJECT_RISKS_AND_UI.md) | Simplified interface, threat cards, analysis logic with standard climate indices |
+| [COMPETITORS.md](COMPETITORS.md) | Checked competitor claims (OneSoil, EOSDA, xarvio, Cropwise, FieldView), corrections, sourced differences |
 
 ## Mandatory rule
 
