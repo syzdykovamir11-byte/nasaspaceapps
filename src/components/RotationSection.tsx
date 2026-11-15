@@ -159,7 +159,6 @@ export function RotationSection({ series, input, onChange }: Props) {
           )}
           {options.length === 2 && <p className={styles.note}>Only 1 alternative found for these crops.</p>}
           {series && <RotationSummary facts={buildFacts(options, period, series.label, priority)} />}
-          <GlanceTable options={options} period={period} />
           <OptionList options={options} period={period} cellText={cellText} />
         </>
       )}
@@ -236,17 +235,27 @@ function OptionList({ options, period, cellText }: { options: RotationOption[]; 
       else n.add(k);
       return n;
     });
-  const line = (o: RotationOption) => {
+  const changeText = (o: RotationOption) =>
+    o.change
+      ? `Year ${o.change.index + 1}: ${o.change.to.crop.name} instead of ${o.change.from.crop.name}`
+      : o.evaluation.crops.map((c) => c.name).join(" → ");
+  // The quick-comparison values, shown on every button so options compare without opening them.
+  const chips = (o: RotationOption): string[] => {
     const known = o.evaluation.fits.filter((f) => f.fitsYears !== null);
     const worst = known.length ? known.reduce((a, b) => (b.fitsYears! < a.fitsYears! ? b : a)) : null;
-    const parts = [
-      o.change ? `${o.change.to.crop.name} instead of ${o.change.from.crop.name}` : o.evaluation.crops.map((c) => c.name).join(" → "),
-      worst ? `${worst.fitsYears} of ${worst.totalYears} years` : null,
+    const unknown = o.evaluation.fits.some((f) => f.fitsYears === null && f.crop.group !== "fallow");
+    return [
+      worst ? `Frost-free: ${unknown ? "at most " : ""}${worst.fitsYears} of ${worst.totalYears} years` : "Frost-free: unknown",
+      ...(o.kind === "current" ? [] : [`Water: ${o.water}`]),
+      o.evaluation.legumes.length ? "Adds nitrogen" : "No nitrogen",
     ];
-    return parts.filter(Boolean).join(" · ");
   };
   return (
     <div className={styles.optionList}>
+      <p className={styles.glanceCaption}>
+        Tap an option to see the details. Frost-free years: NASA POWER, {period}. Crop days and water: FAO guide values{" "}
+        <Src tag="C1" />.
+      </p>
       {options.map((o) => {
         const isOpen = open.has(o.kind);
         const panelId = `option-panel-${o.kind}`;
@@ -261,7 +270,14 @@ function OptionList({ options, period, cellText }: { options: RotationOption[]; 
             >
               <span className={styles.optionText}>
                 <span className={styles.optionTitle}>{TITLE[o.kind]}</span>
-                <span className={styles.optionLine}>{line(o)}</span>
+                <span className={styles.optionLine}>{changeText(o)}</span>
+                <span className={styles.chips}>
+                  {chips(o).map((c) => (
+                    <span key={c} className={styles.chip}>
+                      {c}
+                    </span>
+                  ))}
+                </span>
               </span>
               <svg className={styles.chevron} width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
                 <polyline points="5,7.5 10,12.5 15,7.5" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -279,89 +295,6 @@ function OptionList({ options, period, cellText }: { options: RotationOption[]; 
   );
 }
 
-const GLANCE_LABEL: Record<RotationOption["kind"], string> = {
-  current: "Your current rotation",
-  legume: "Add a legume",
-  water: "Lower water need",
-  season: "A crop that fits between the frosts more often",
-  family: "Break the run of one crop family",
-};
-
-/**
- * The main comparison values for every option at once, so options can be compared without swiping.
- * A real table on wider screens and a labelled list on narrow ones; only one of the two is displayed.
- */
-function GlanceTable({ options, period }: { options: RotationOption[]; period: string }) {
-  const fitText = (o: RotationOption) => {
-    const known = o.evaluation.fits.filter((f) => f.fitsYears !== null);
-    if (!known.length) return "Unknown";
-    const worst = known.reduce((a, b) => (b.fitsYears! < a.fitsYears! ? b : a));
-    const unknown = o.evaluation.fits.some((f) => f.fitsYears === null && f.crop.group !== "fallow");
-    return `${unknown ? "At most " : ""}${worst.fitsYears} of ${worst.totalYears} years`;
-  };
-  const changeText = (o: RotationOption) =>
-    o.change
-      ? `Year ${o.change.index + 1}: ${o.change.to.crop.name} instead of ${o.change.from.crop.name}`
-      : o.evaluation.crops.map((c) => c.name).join(" → ");
-  const waterText = (o: RotationOption) => (o.kind === "current" ? "–" : capitalize(o.water));
-  const nText = (o: RotationOption) => (o.evaluation.legumes.length ? "Yes" : "No");
-  const fitHead = `Frost-free season long enough (${period})`;
-  return (
-    <div className={styles.glanceWrap}>
-      <p className={styles.glanceCaption} id="glance-caption">
-        Quick comparison. Frost data: NASA POWER, {period}. Crop days and water: FAO guide values <Src tag="C1" />.
-        Details are in the cards below.
-      </p>
-      <table className={styles.glance} aria-labelledby="glance-caption">
-        <thead>
-          <tr>
-            <th scope="col">Option</th>
-            <th scope="col">What changes</th>
-            <th scope="col">{fitHead}</th>
-            <th scope="col">Water need vs now</th>
-            <th scope="col">Adds nitrogen to soil</th>
-          </tr>
-        </thead>
-        <tbody>
-          {options.map((o) => (
-            <tr key={o.kind}>
-              <th scope="row">{GLANCE_LABEL[o.kind]}</th>
-              <td>{changeText(o)}</td>
-              <td>{fitText(o)}</td>
-              <td>{waterText(o)}</td>
-              <td>{nText(o)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <ul className={styles.glanceList} aria-labelledby="glance-caption">
-        {options.map((o) => (
-          <li key={o.kind}>
-            <p className={styles.glanceItemTitle}>{GLANCE_LABEL[o.kind]}</p>
-            <dl>
-              <div>
-                <dt>What changes</dt>
-                <dd>{changeText(o)}</dd>
-              </div>
-              <div>
-                <dt>{fitHead}</dt>
-                <dd>{fitText(o)}</dd>
-              </div>
-              <div>
-                <dt>Water need vs now</dt>
-                <dd>{waterText(o)}</dd>
-              </div>
-              <div>
-                <dt>Adds nitrogen to soil</dt>
-                <dd>{nText(o)}</dd>
-              </div>
-            </dl>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
 
 function DaysInput({ cropId, name, days, onCommit }: { cropId: string; name: string; days: FarmerDays; onCommit: (id: string, raw: string) => boolean }) {
   const crop = CROP_BY_ID[cropId]!;
