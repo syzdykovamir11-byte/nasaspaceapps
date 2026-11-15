@@ -12,7 +12,7 @@
   border-radius: var(--radius);
   padding: var(--space-3) var(--space-4) var(--space-4);
   margin: var(--space-4) 0 0;
-  background: var(--surface);
+  background: var(--card);
 }
 /* Legend as a plain heading inside the box: no border line through wrapped text, same left edge as the fields. */
 .fieldset legend { float: left; width: 100%; padding: 0; margin-bottom: var(--space-3); font-weight: 600; text-wrap: balance; }
@@ -27,7 +27,7 @@
   padding: var(--space-2) var(--space-2);
   border: 1px solid var(--control-border);
   border-radius: var(--radius-sm);
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text);
 }
 
@@ -48,7 +48,7 @@
 
 
 .card {
-  background: var(--surface);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: var(--space-4) var(--space-4);
@@ -59,7 +59,7 @@
 
 /* Option buttons that open their card. Closed by default. */
 .optionList { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
-.optionItem { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.optionItem { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); overflow: hidden; }
 .optionItem.current { border-top: 4px solid var(--text); }
 .optionButton {
   width: 100%;
@@ -148,7 +148,7 @@
   padding: var(--space-2) var(--space-2);
   border: 1px solid var(--control-border);
   border-radius: var(--radius-sm);
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text);
   max-width: 10rem;
 }
@@ -166,7 +166,7 @@
   border: 1px solid var(--border);
   border-left: 4px solid var(--accent);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--card);
 }
 .aiTitle { margin: 0 0 var(--space-2); font-size: var(--step-1); }
 .aiList { margin: 0 0 var(--space-2); padding-left: 1.2em; }
@@ -193,7 +193,7 @@
   border-collapse: separate;
   border-spacing: 0;
   font-size: var(--step--1);
-  background: var(--surface);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
@@ -202,7 +202,7 @@
 .glance thead th { border-top: 0; color: var(--muted); font-weight: 600; }
 .glance tbody th { font-weight: 600; }
 
-.glanceList { display: none; list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.glanceList { display: none; list-style: none; margin: 0; padding: 0; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
 .glanceList li { max-width: none; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border); }
 .glanceList li:first-child { border-top: 0; }
 .glanceItemTitle { margin: 0 0 var(--space-1); font-weight: 600; }

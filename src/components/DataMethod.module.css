@@ -3,7 +3,7 @@
 .panel {
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--card);
   padding: 0 var(--space-4);
 }
 .panel[open] { padding-bottom: var(--space-4); }

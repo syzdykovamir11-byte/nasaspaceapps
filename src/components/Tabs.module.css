@@ -1,11 +1,13 @@
 .list {
   display: flex;
   gap: var(--space-1);
-  border-bottom: 1px solid var(--border);
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
   margin: 0 0 var(--space-4);
   position: sticky;
   top: 0;
-  background: inherit;
+  background: var(--card);
+  box-shadow: 0 0 0 var(--space-1) var(--surface);
   z-index: 1;
 }
 
@@ -14,17 +16,18 @@
   min-height: 44px;
   padding: 0 var(--space-2);
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-radius: calc(var(--radius-sm) - 4px);
   background: none;
   color: var(--muted);
   cursor: pointer;
-  margin-bottom: -1px;
+  transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
 }
 .tab:hover { color: var(--text); }
 .tab:active { opacity: 0.8; }
-.tab[aria-selected="true"] { color: var(--text); font-weight: 600; border-bottom-color: var(--text); }
+.tab[aria-selected="true"] { color: var(--surface); font-weight: 600; background: var(--accent); }
+.tab[aria-selected="true"]:hover { color: var(--surface); }
 
 /* From 1280px the results panel scrolls internally with 16px padding, so the bar sticks to its padding edge. */
 @media (min-width: 1280px) {
-  .list { top: calc(-1 * var(--space-4)); }
+  .list { top: calc(-1 * var(--space-4) + var(--space-1)); }
 }

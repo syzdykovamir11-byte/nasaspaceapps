@@ -1,9 +1,13 @@
 :root {
-  --bg: #f6f4ee;
-  --surface: #ffffff;
+  /* Look: paper panels over a dark green page, with sand cards inside the panels. */
+  --page: #22301f;
+  --bg: #e6dec9;
+  --surface: #f6f1e7;
+  --card: #ebe4d3;
   --text: #1f2a1f;
-  --muted: #5a6658;
-  --border: #d9d6cb;
+  --muted: #566153;
+  --border: #d9d0bb;
+  --shadow: 0 10px 30px rgb(0 0 0 / 0.28);
   --accent: #2f6b3a;
   --normal: #2f6b3a;
   --normal-bg: #e7f1e6;
@@ -11,16 +15,17 @@
   --watch-bg: #fbf0d9;
   --unusual: #a3271c;
   --unusual-bg: #fbe5e2;
-  --map-water: #dfe6e8;
-  --map-land: #eef0e4;
-  --map-land-other: #e2e2da;
-  --map-border: #7d8778;
+  /* The offline map is dark green, like the satellite view, so the paper panels stand out the same way. */
+  --map-water: #18231a;
+  --map-land: #2c3d29;
+  --map-land-other: #233021;
+  --map-border: #7d8f78;
   /* Borders of form controls and inactive indicators: 3:1 or more against --surface. */
   --control-border: #7d8778;
   /* Data tint for precipitation only; never used for actions or status. */
   --data-rain: #3f6f86;
-  --radius: 10px;
-  --radius-sm: 6px;
+  --radius: 18px;
+  --radius-sm: 12px;
   --radius-pill: 999px;
 
   /* Type scale, ratio 1.2, base 17px. */
@@ -49,8 +54,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #161a15;
+    --page: #0e120d;
+    --bg: #2c352a;
     --surface: #1f251e;
+    --card: #262e24;
+    --shadow: 0 10px 30px rgb(0 0 0 / 0.5);
     --text: #e8ece4;
     --muted: #a6b0a2;
     --border: #364034;
@@ -79,7 +87,7 @@
 html, body { margin: 0; }
 
 body {
-  background: var(--bg);
+  background: var(--page);
   color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-size: var(--step-0);

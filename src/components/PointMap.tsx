@@ -384,7 +384,7 @@ export default function PointMap({
         )}
         {drawing && draft.length > 0 && (
           <>
-            <Polyline positions={draft.length >= 3 ? [...draft, draft[0]!] : draft} pathOptions={{ color: ink, weight: 2, dashArray: "6 4" }} interactive={false} />
+            <Polyline positions={draft.length >= 3 ? [...draft, draft[0]!] : draft} pathOptions={{ color: surface, weight: 2, dashArray: "6 4" }} interactive={false} />
             {draft.map((p, i) => (
               <CircleMarker key={i} center={p} radius={5} pathOptions={{ color: ink, fillColor: surface, weight: 2, fillOpacity: 1 }} interactive={false} />
             ))}
