@@ -246,21 +246,20 @@ function GlanceTable({ options, period }: { options: RotationOption[]; period: s
     if (!known.length) return "Unknown";
     const worst = known.reduce((a, b) => (b.fitsYears! < a.fitsYears! ? b : a));
     const unknown = o.evaluation.fits.some((f) => f.fitsYears === null && f.crop.group !== "fallow");
-    return `${unknown ? "At most " : ""}${worst.fitsYears} of ${worst.totalYears}`;
+    return `${unknown ? "At most " : ""}${worst.fitsYears} of ${worst.totalYears} years`;
   };
   const changeText = (o: RotationOption) =>
     o.change
-      ? `Year ${o.change.index + 1}: ${o.change.from.crop.name} → ${o.change.to.crop.name}`
+      ? `Year ${o.change.index + 1}: ${o.change.to.crop.name} instead of ${o.change.from.crop.name}`
       : o.evaluation.crops.map((c) => c.name).join(" → ");
   const waterText = (o: RotationOption) => (o.kind === "current" ? "–" : capitalize(o.water));
   const nText = (o: RotationOption) => (o.evaluation.legumes.length ? "Yes" : "No");
-  const fitHead = `Years every crop fits between the frosts (${period})`;
+  const fitHead = `Frost-free season long enough (${period})`;
   return (
     <div className={styles.glanceWrap}>
       <p className={styles.glanceCaption} id="glance-caption">
-        Compare at a glance. Frost years from NASA POWER daily minimum temperature, {period}; days from sowing to
-        harvest and water need from FAO guide values unless you entered your own <Src tag="C1" />. Details are in the
-        cards below.
+        Quick comparison. Frost data: NASA POWER, {period}. Crop days and water: FAO guide values <Src tag="C1" />.
+        Details are in the cards below.
       </p>
       <table className={styles.glance} aria-labelledby="glance-caption">
         <thead>
@@ -268,8 +267,8 @@ function GlanceTable({ options, period }: { options: RotationOption[]; period: s
             <th scope="col">Option</th>
             <th scope="col">What changes</th>
             <th scope="col">{fitHead}</th>
-            <th scope="col">FAO water need vs now</th>
-            <th scope="col">Nitrogen-fixing crop</th>
+            <th scope="col">Water need vs now</th>
+            <th scope="col">Adds nitrogen to soil</th>
           </tr>
         </thead>
         <tbody>
@@ -298,11 +297,11 @@ function GlanceTable({ options, period }: { options: RotationOption[]; period: s
                 <dd>{fitText(o)}</dd>
               </div>
               <div>
-                <dt>FAO water need vs now</dt>
+                <dt>Water need vs now</dt>
                 <dd>{waterText(o)}</dd>
               </div>
               <div>
-                <dt>Nitrogen-fixing crop</dt>
+                <dt>Adds nitrogen to soil</dt>
                 <dd>{nText(o)}</dd>
               </div>
             </dl>
@@ -365,7 +364,7 @@ function DaysInput({ cropId, name, days, onCommit }: { cropId: string; name: str
   );
 }
 
-const daysText = (f: CropFit) => (f.days === null ? "" : ` (${f.days} days, ${f.daysSource === "farmer" ? "your value" : "FAO guide"})`);
+const daysText = (f: CropFit) => (f.days === null ? "" : `, needs ${f.days} days (${f.daysSource === "farmer" ? "your value" : "FAO guide"})`);
 
 function OptionCard({ option: o, period, cellText }: { option: RotationOption; period: string; cellText: string }) {
   const ev = o.evaluation;
@@ -406,60 +405,66 @@ function OptionCard({ option: o, period, cellText }: { option: RotationOption; p
         <strong>Why: </strong>
         {o.kind === "current" && "This is what you grow now. The other options are compared with it."}
         {o.kind === "legume" && o.change &&
-          `${o.change.to.crop.name} replaces ${o.change.from.crop.name} in year ${o.change.index + 1}. Our rule: put a nitrogen-fixing legume where a cereal follows a cereal.`}
+          `${o.change.to.crop.name} instead of ${o.change.from.crop.name} in year ${o.change.index + 1}. Our rule: where a cereal follows a cereal, put in a legume, a crop that adds nitrogen to the soil.`}
         {o.kind === "water" && o.change &&
-          `${o.change.to.crop.name} replaces ${o.change.from.crop.name} in year ${o.change.index + 1}. Our rule: swap the crop with the highest FAO water need for the crop in our table with the lowest${o.legumesExcluded ? " (legumes left out, as they have their own option)" : ""}.`}
+          `${o.change.to.crop.name} instead of ${o.change.from.crop.name} in year ${o.change.index + 1}. Our rule: swap the crop with the highest FAO water need for the crop in our table with the lowest${o.legumesExcluded ? " (legumes left out, as they have their own option)" : ""}.`}
         {o.kind === "family" && o.change &&
-          `${o.change.to.crop.name} replaces ${o.change.from.crop.name} in year ${o.change.index + 1}. Our rule: where one crop family follows itself, put a crop from another family in that slot${o.legumesExcluded ? " (legumes left out, as they have their own option)" : ""}. Whether this helps against pests or disease on your farm is for your agronomist to judge; this tool has no pest data.`}
+          `${o.change.to.crop.name} instead of ${o.change.from.crop.name} in year ${o.change.index + 1}. Our rule: where one crop family follows itself, put a crop from another family in that slot${o.legumesExcluded ? " (legumes left out, as they have their own option)" : ""}. Whether this helps against pests or disease on your farm is for your agronomist to judge; this tool has no pest data.`}
         {o.kind === "season" && o.change &&
-          `${o.change.to.crop.name} replaces ${o.change.from.crop.name} in year ${o.change.index + 1}. Our rule: swap the crop whose days from sowing to harvest fit between the frosts in the fewest years for the crop that fits in the most years${o.legumesExcluded ? " (legumes left out, as they have their own option)" : ""}.`}
+          `${o.change.to.crop.name} instead of ${o.change.from.crop.name} in year ${o.change.index + 1}. Our rule: swap the crop whose days from sowing to harvest fit between the frosts in the fewest years for the crop that fits in the most years${o.legumesExcluded ? " (legumes left out, as they have their own option)" : ""}.`}
       </p>
 
       <dl className={styles.facts}>
         <div>
-          <dt>Years when every crop&apos;s days fit between the frosts</dt>
+          <dt>Years the frost-free season was long enough for every crop</dt>
           <dd>
             {!worst
               ? "Unknown: no days from sowing to harvest for these crops"
               : unknownFit.length
-                ? `At most ${worst.fitsYears} of ${total} (${period}); unknown for ${unknownFit.join(", ")}`
-                : `${worst.fitsYears} of ${total} (${period}), limited by ${worst.crop.name}${daysText(worst)}`}
+                ? `At most ${worst.fitsYears} of ${total} years (${period}); unknown for ${unknownFit.join(", ")}`
+                : `${worst.fitsYears} of ${total} years (${period})`}
+            {worst && !unknownFit.length && (
+              <span className={styles.ddNote}>Hardest to fit: {worst.crop.name}{daysText(worst)}.</span>
+            )}
           </dd>
         </div>
         {o.change && (
           <div>
-            <dt>Years when {o.change.to.crop.name}&apos;s days fit between the frosts</dt>
+            <dt>Long enough for {o.change.to.crop.name}</dt>
             <dd>
-              {o.change.to.fitsYears === null ? "Unknown" : `${o.change.to.fitsYears} of ${total}${daysText(o.change.to)}`}
-              {o.change.from.fitsYears !== null &&
-                `; ${o.change.from.crop.name}: ${o.change.from.fitsYears} of ${total}${daysText(o.change.from)}`}
+              {o.change.to.fitsYears === null ? "Unknown" : `${o.change.to.fitsYears} of ${total} years${daysText(o.change.to)}`}
+              {o.change.from.fitsYears !== null && (
+                <span className={styles.ddNote}>
+                  {o.change.from.crop.name}: {o.change.from.fitsYears} of {total} years{daysText(o.change.from)}
+                </span>
+              )}
             </dd>
           </div>
         )}
         {o.kind !== "current" && (
           <div>
-            <dt>FAO water need, {o.change ? `${o.change.to.crop.name} vs ${o.change.from.crop.name}` : "vs now"}</dt>
+            <dt>Water need{o.change ? `: ${o.change.to.crop.name} vs ${o.change.from.crop.name}` : " vs now"}</dt>
             <dd>
               {o.water === "unknown" ? "Unknown (no FAO value for one of them)" : capitalize(o.water)}
               {o.change?.to.crop.waterMm && o.change.from.crop.waterMm && (
                 <span className={styles.ddNote}>
-                  {range(o.change.to.crop.waterMm, "mm")} vs {range(o.change.from.crop.waterMm, "mm")}: overlapping global
-                  ranges for irrigated crops, compared by their midpoints; &quot;about the same&quot; means under{" "}
-                  {WATER_SAME_MM}&nbsp;mm apart (our choice) <Src tag="C1" />.
+                  {range(o.change.to.crop.waterMm, "mm")} vs {range(o.change.from.crop.waterMm, "mm")} per season <Src tag="C1" />.
+                  FAO guide values for irrigated crops, compared by the middle of each range; under {WATER_SAME_MM}&nbsp;mm
+                  apart counts as &quot;about the same&quot; (our choice).
                 </span>
               )}
             </dd>
           </div>
         )}
         <div>
-          <dt>Nitrogen-fixing crop</dt>
-          <dd>{ev.legumes.length ? "Yes" : "No"}</dd>
+          <dt>Adds nitrogen to soil</dt>
+          <dd>{ev.legumes.length ? `Yes (${ev.legumes.map((c) => c.name).join(", ")})` : "No"}</dd>
         </div>
       </dl>
 
       <p className={styles.caveat}>
-        Frost here means the daily minimum air temperature at 2&nbsp;m, averaged over the grid cell, fell below 0&nbsp;°C.
-        Many crops survive light frost, so a crop may still do well in the other years.
+        Frost-free season: days between the last spring frost and the first autumn frost (air below 0&nbsp;°C, NASA
+        POWER, area average). Many crops survive a light frost.
       </p>
 
       <details className={styles.details}>

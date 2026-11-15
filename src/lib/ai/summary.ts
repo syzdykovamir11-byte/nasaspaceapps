@@ -13,6 +13,8 @@ export interface OptionFacts {
   cropsByYear: string[];
   change: string | null;
   yearsEveryCropFitsBetweenFrosts: string;
+  /** For an alternative: the new crop's and the replaced crop's own frost-free fit. */
+  changedCropFit: string | null;
   faoWaterNeedVsCurrent: string | null;
   faoWaterNeedRanges: string[];
   includesNitrogenFixingLegume: boolean;
@@ -49,16 +51,22 @@ export function buildFacts(options: RotationOption[], period: string, place: str
       const known = ev.fits.filter((f) => f.fitsYears !== null);
       const worst = known.length ? known.reduce((a, b) => (b.fitsYears! < a.fitsYears! ? b : a)) : null;
       const unknownFit = [...new Set(ev.fits.filter((f) => f.fitsYears === null && f.crop.group !== "fallow").map((f) => f.crop.name))];
-      const crops = [...new Map(ev.crops.filter((c) => c.waterMm).map((c) => [c.id, c])).values()];
+      // Water ranges only for the swapped pair, so the summary does not repeat crops that stay the same.
+      const crops = o.change ? [o.change.to.crop, o.change.from.crop].filter((c) => c.waterMm) : [];
       return {
         title: TITLE[o.kind],
         cropsByYear: ev.crops.map((c) => c.name),
-        change: o.change ? `Year ${o.change.index + 1}: ${o.change.from.crop.name} replaced by ${o.change.to.crop.name}` : null,
+        change: o.change ? `Year ${o.change.index + 1}: ${o.change.to.crop.name} instead of ${o.change.from.crop.name}` : null,
         yearsEveryCropFitsBetweenFrosts: worst
           ? `${unknownFit.length ? "at most " : ""}${worst.fitsYears} of ${worst.totalYears} years, limited by ${worst.crop.name}`
           : "unknown",
+        changedCropFit: o.change
+          ? [o.change.to, o.change.from]
+              .map((f) => `${f.crop.name} ${f.fitsYears === null ? "unknown" : `${f.fitsYears} of ${f.totalYears} years`}`)
+              .join(", ")
+          : null,
         faoWaterNeedVsCurrent: o.kind === "current" ? null : o.water,
-        faoWaterNeedRanges: crops.map((c) => `${c.name}: ${c.waterMm![0]}-${c.waterMm![1]} mm per season (irrigated crop guide value)`),
+        faoWaterNeedRanges: crops.map((c) => `${c.name} ${c.waterMm![0]}-${c.waterMm![1]} mm`),
         includesNitrogenFixingLegume: ev.legumes.length > 0,
         unknowns: [
           ...unknownFit.map((n) => `No FAO growing period for ${n}`),
@@ -78,24 +86,35 @@ export function buildFixedParts(): Pick<SummaryFacts, "sources" | "limits"> {
       ...(["C1", "C3"] as SourceTag[]).map((t) => ({ tag: t, title: SOURCES[t].title })),
     ],
     limits: [
-      "Weather is an area average, not one field.",
-      "FAO values are rough global guide values, not local measurements.",
+      "The weather data covers a wide area, not your one field.",
+      "Water needs are rough world guide values for watered fields, not local numbers.",
       "No data on soil type, pests, prices or yields.",
     ],
   };
 }
 
-export const SYSTEM_PROMPT = `You explain a crop rotation comparison to a farmer in northern Kazakhstan who has no technical background.
+export const SYSTEM_PROMPT = `You explain a crop rotation comparison to a farmer in northern Kazakhstan. The farmer has no technical background and may read English as a second language.
 
-Rules:
+Content rules:
 - Use only the facts in the JSON you are given. Do not add facts, numbers, crops, dates, yields, prices, income, or advice that is not in the JSON.
-- Every number you write must appear in the JSON exactly as written there. Do not calculate, round, or convert numbers.
-- Cite only sources from the JSON "sources" list, by their tag in square brackets, for example [C1] or [NASA POWER]. Square brackets are only for these tags. Never name any other source, website, study, or organisation. Never write a web link.
-- Do not say which option is best and do not tell the farmer what to plant. Say what each option changes and what the facts show, and remind them to check with their agronomist.
-- Mention the farmer's priority once, only to point to the fact that relates to it.
-- Plain English, short sentences, no jargon. Explain "between the frosts" as "the frost-free part of the year".
-- Format: one line per option, starting with "- " and the option title, then one short closing line that starts with "Check with your agronomist:" and names one limit from the JSON "limits" list.
-- At most 130 words in total. No headings, no bold, no markdown other than the "- " lines.`;
+- Give the key numbers for each option. Current rotation: how many years the frost-free season was long enough. Alternative: the new crop's and the old crop's years from "changedCropFit", and the water need in mm from "faoWaterNeedRanges". Write each number only once.
+- Do not repeat the crop list or the change text word for word; say it briefly in your own words.
+- Every number you write must appear in the JSON exactly as written there. Do not calculate, round, add up, or convert numbers. Do not write percentages.
+- Do not say which option is best and do not tell the farmer what to plant. Say what each option changes and what the numbers show.
+- If the farmer's priority is "Improve soil", say which options add nitrogen to the soil. If it is "Save water", say which options need less water.
+
+Language rules:
+- Very plain English, as for a 12-year-old. Sentences under 15 words. Everyday words.
+- Say "frost-free season" instead of "between the frosts". Say "adds nitrogen to the soil" instead of "nitrogen-fixing legume". Say "water need" instead of "FAO water need".
+- Write numbers as digits, like "41 of 45 years" and "350-500 mm".
+
+Sources:
+- Put one bracket at the end of each option line with the tags you used, from the JSON "sources" list only, for example [NASA POWER, C1]. Square brackets are only for these tags. Never name any other source, website, study, or organisation. Never write a web link.
+
+Format:
+- One line per option. Start it with "- ", the option title and a colon. At most 3 short sentences per line.
+- Then one last line that starts with "Before you decide:" and says to talk to an agronomist and names one limit from the JSON "limits" list.
+- At most 150 words in total. No headings, no bold, no other markdown.`;
 
 export function userPrompt(facts: SummaryFacts): string {
   return `Facts (JSON):\n${JSON.stringify(facts, null, 2)}`;

@@ -45,7 +45,7 @@ export function RotationSummary({ facts }: { facts: SummaryFacts }) {
       <h3 id="ai-summary-title" className={styles.aiTitle}>In plain words</h3>
       {st.s === "idle" && (
         <>
-          <p className={styles.hint}>A short summary of the options below, written by AI from the facts on the cards only.</p>
+          <p className={styles.hint}>The options below in a few simple sentences, with the key numbers. Written by AI from the cards only.</p>
           <button type="button" className={styles.aiButton} onClick={run}>
             Summarize in plain words
           </button>
@@ -65,9 +65,8 @@ export function RotationSummary({ facts }: { facts: SummaryFacts }) {
           {items.length > 0 && <ul className={styles.aiList}>{items.map((t, i) => <li key={i}>{t}</li>)}</ul>}
           {rest.map((t, i) => <p key={i}>{t}</p>)}
           <p className={styles.aiLabel}>
-            Written by AI (Google {st.model}){st.created && `, ${st.created}`}, from the facts on the cards below and only
-            the sources listed there. Our check rejects it if it adds a number. The cards are the reference; check them
-            before acting.
+            Written by AI (Google {st.model}){st.created && `, ${st.created}`} from the cards below. Every number is
+            checked against the cards. The cards are the reference.
           </p>
         </>
       )}
