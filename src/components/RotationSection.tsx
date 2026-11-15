@@ -9,7 +9,6 @@ import { median } from "@/lib/indices/rank";
 import { cellSizeKm } from "@/lib/power/grid";
 import type { PowerSeries } from "@/lib/power/types";
 import { buildFacts } from "@/lib/ai/summary";
-import { Carousel } from "./Carousel";
 import { RotationSummary } from "./RotationSummary";
 import styles from "./RotationSection.module.css";
 
@@ -161,14 +160,7 @@ export function RotationSection({ series, input, onChange }: Props) {
           {options.length === 2 && <p className={styles.note}>Only 1 alternative found for these crops.</p>}
           {series && <RotationSummary facts={buildFacts(options, period, series.label, priority)} />}
           <GlanceTable options={options} period={period} />
-          <Carousel
-            label="Rotation options"
-            items={options.map((o) => ({
-              key: o.kind,
-              title: TITLE[o.kind],
-              node: <OptionCard option={o} period={period} cellText={cellText} />,
-            }))}
-          />
+          <OptionList options={options} period={period} cellText={cellText} />
         </>
       )}
 
@@ -231,6 +223,59 @@ export function RotationSection({ series, input, onChange }: Props) {
         </details>
       </div>
     </section>
+  );
+}
+
+/** One button per option; the card opens below it with a height animation. All start closed. */
+function OptionList({ options, period, cellText }: { options: RotationOption[]; period: string; cellText: string }) {
+  const [open, setOpen] = useState<Set<string>>(() => new Set());
+  const toggle = (k: string) =>
+    setOpen((s) => {
+      const n = new Set(s);
+      if (n.has(k)) n.delete(k);
+      else n.add(k);
+      return n;
+    });
+  const line = (o: RotationOption) => {
+    const known = o.evaluation.fits.filter((f) => f.fitsYears !== null);
+    const worst = known.length ? known.reduce((a, b) => (b.fitsYears! < a.fitsYears! ? b : a)) : null;
+    const parts = [
+      o.change ? `${o.change.to.crop.name} instead of ${o.change.from.crop.name}` : o.evaluation.crops.map((c) => c.name).join(" → "),
+      worst ? `${worst.fitsYears} of ${worst.totalYears} years` : null,
+    ];
+    return parts.filter(Boolean).join(" · ");
+  };
+  return (
+    <div className={styles.optionList}>
+      {options.map((o) => {
+        const isOpen = open.has(o.kind);
+        const panelId = `option-panel-${o.kind}`;
+        return (
+          <div key={o.kind} className={`${styles.optionItem} ${o.kind === "current" ? styles.current : ""}`}>
+            <button
+              type="button"
+              className={styles.optionButton}
+              aria-expanded={isOpen}
+              aria-controls={panelId}
+              onClick={() => toggle(o.kind)}
+            >
+              <span className={styles.optionText}>
+                <span className={styles.optionTitle}>{TITLE[o.kind]}</span>
+                <span className={styles.optionLine}>{line(o)}</span>
+              </span>
+              <svg className={styles.chevron} width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+                <polyline points="5,7.5 10,12.5 15,7.5" fill="none" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            </button>
+            <div id={panelId} className={styles.optionPanel} data-open={isOpen} inert={!isOpen}>
+              <div className={styles.optionPanelInner}>
+                <OptionCard option={o} period={period} cellText={cellText} />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -393,8 +438,7 @@ function OptionCard({ option: o, period, cellText }: { option: RotationOption; p
   if (ev.mixesRoots) benefits.push(<>Mixes shallower and deeper rooting crops <Src tag="C2" />.</>);
 
   return (
-    <article className={`${styles.card} ${o.kind === "current" ? styles.current : ""}`}>
-      <h3 className={styles.cardTitle}>{TITLE[o.kind]}</h3>
+    <article className={styles.card} aria-label={TITLE[o.kind]}>
       <ol className={styles.sequence} aria-label="Crops by year">
         {ev.crops.map((c, i) => {
           const changed = o.change?.index === i;
