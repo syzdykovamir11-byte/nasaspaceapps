@@ -263,30 +263,36 @@
 .drawBar {
   position: absolute;
   z-index: 500; /* above Leaflet panes (max 400 for overlays, 650 tooltips are fine underneath the bar region) */
-  left: 50%;
-  bottom: var(--space-3);
-  transform: translateX(-50%);
+  /* Pinned to both sides so it uses the map's width instead of shrinking to a narrow column. */
+  left: var(--space-3);
+  right: var(--space-3);
+  /* Top edge below 1280px: the bottom holds the zoom buttons and a two-line attribution. */
+  top: var(--space-3);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  max-width: calc(100% - 2 * var(--space-3));
   padding: var(--space-2) var(--space-3);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
-.drawBar p { margin: 0; font-size: var(--step--1); font-weight: 600; max-width: none; }
+.drawBar p { margin: 0; flex: 1 1 100%; text-align: center; font-size: var(--step--1); font-weight: 600; max-width: none; }
 .drawPrimary, .drawSecondary { min-height: 44px; padding: 0 var(--space-3); border-radius: var(--radius-sm); cursor: pointer; }
 .drawPrimary { border: 1px solid var(--accent); background: var(--accent); color: var(--surface); font-weight: 600; }
-.drawSecondary { border: 1px solid var(--control-border); background: var(--surface); color: var(--text); }
+.drawSecondary { border: 0; background: var(--card); color: var(--text); }
 .drawPrimary[aria-disabled="true"], .drawSecondary[aria-disabled="true"] { opacity: 0.4; cursor: default; }
 .drawPrimary:active, .drawSecondary:active { transform: scale(0.98); }
 @media (min-width: 1280px) {
   /* Centred in the map strip between the floating panels. */
-  .drawBar { left: calc((var(--map-left-inset) + 100vw - var(--map-right-inset)) / 2); bottom: var(--space-6); }
+  .drawBar {
+    left: calc(var(--map-left-inset) + 44px + 2 * var(--space-3));
+    right: calc(var(--map-right-inset) + var(--space-3));
+    top: auto;
+    bottom: var(--space-6);
+  }
 }
 
 /* Actions that connect location, season and crop selection. */
@@ -317,10 +323,38 @@
 .changeLocation:hover { text-decoration-thickness: 2px; }
 .changeLocation:active { opacity: 0.8; }
 .areaNote { margin: 0 0 var(--space-4); color: var(--muted); font-size: var(--step--1); }
-.more { margin-top: var(--space-3); border-top: 1px solid var(--border); }
-.more summary { min-height: 44px; padding: var(--space-2) 0; color: var(--accent); cursor: pointer; }
-.more summary:hover { text-decoration: underline; }
-.more summary:active { opacity: 0.8; }
+/* Section toggles look like the reference's "Hide the numbers" row: a sand row with a chevron on the right. */
+.more { margin-top: var(--space-2); }
+.more summary {
+  list-style: none;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease-out);
+}
+.more summary::-webkit-details-marker { display: none; }
+.more summary::after {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform var(--dur) var(--ease-out);
+}
+.more[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
+.more summary:hover { background: var(--normal-bg); }
+.more summary:active { opacity: 0.85; }
+.more[open] > summary { margin-bottom: var(--space-2); }
 
 .healthTitle { margin: 0 0 var(--space-2); font-size: var(--step-1); }
 .more .cards { margin-top: var(--space-2); }

@@ -53,14 +53,14 @@
   border-radius: var(--radius);
   padding: var(--space-4) var(--space-4);
 }
-.current { border-top: 4px solid var(--text); }
+.current { border-left: 6px solid var(--accent); }
 
 .cardTitle { margin: 0 0 var(--space-2); font-size: var(--step-1); }
 
 /* Option buttons that open their card. Closed by default. */
 .optionList { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
 .optionItem { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); overflow: hidden; }
-.optionItem.current { border-top: 4px solid var(--text); }
+.optionItem.current { border-left: 6px solid var(--accent); }
 .optionButton {
   width: 100%;
   min-height: 56px;

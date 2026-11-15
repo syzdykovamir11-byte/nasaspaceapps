@@ -121,7 +121,21 @@ html .leaflet-container .leaflet-bottom.leaflet-right .leaflet-control-attributi
   html .leaflet-container .leaflet-bottom.leaflet-right .leaflet-control-attribution { max-width: none; }
 }
 html .leaflet-container .leaflet-bar a { background: var(--surface); color: var(--text); border-color: var(--border); }
-html .leaflet-container .leaflet-bar a:hover { background: var(--bg); }
+html .leaflet-container .leaflet-bar a:hover { background: var(--card); }
+/* Zoom buttons and place labels in the same paper style as the panels. */
+html .leaflet-container .leaflet-bar { border: 0; border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow); }
+html .leaflet-container .leaflet-bar a:first-child { border-top-left-radius: var(--radius-sm); border-top-right-radius: var(--radius-sm); }
+html .leaflet-container .leaflet-bar a:last-child { border-bottom-left-radius: var(--radius-sm); border-bottom-right-radius: var(--radius-sm); }
+html .leaflet-container .leaflet-tooltip {
+  background: var(--surface);
+  color: var(--text);
+  border: 0;
+  border-radius: var(--radius-pill);
+  padding: 2px var(--space-3);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+}
+html .leaflet-container .leaflet-tooltip::before { display: none; }
+html .leaflet-container .leaflet-control-attribution { border-top-left-radius: var(--radius-sm); }
 
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
