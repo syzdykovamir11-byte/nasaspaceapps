@@ -3,22 +3,51 @@
 2026 NASA Space Apps Challenge — *Field Shift: Adapting Farms with NASA Data*
 https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/
 
-Status: first working prototype of the interface (2026-11-14). The NASA POWER request has not yet been tested from a real browser; see "Prototype" below.
+Status: the app is a copy of a teammate's code, https://github.com/Almasx/nasa (commit `4f51cff`, copied 2026-11-15). Design and functions are unchanged. One line differs: the Mapbox token is read from `.env` (see Run). The earlier Vite prototype is in the git history.
 
-## Prototype
+## App
+
+Next.js 14, Tailwind CSS, Mapbox GL with Mapbox Draw, AgroMonitoring API, Postgres through Drizzle ORM.
+
+What it does:
+
+- Satellite map (Mapbox `standard-satellite` style).
+- "+" in the Fields panel starts drawing a polygon. Polygons of 1 ha or more open the "Create new field" form (crop, name).
+- On create, the field is registered as a polygon in AgroMonitoring and saved to the `fields` table.
+- Clicking a field loads satellite imagery for the selected date from AgroMonitoring and shows MIN, MEDIAN and MAX for the vegetation indices it returns, plus six indicator cards.
+- Date switch at the top. NVDI / Satellite switch on the left.
+
+### Run
+
+1. Copy `.env.example` to `.env` and fill in:
+   - `DATABASE_URL`: the teammate's Supabase database URL. It is not in the repository.
+   - `NEXT_PUBLIC_MAPBOX_TOKEN`: the Mapbox token from line 14 of `src/features/map/index.tsx` in https://github.com/Almasx/nasa. GitHub push protection blocks this token in our repository, so it lives in `.env`.
+2. Create the table:
+
+```bash
+npx drizzle-kit push
+```
+
+3. Start:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Four steps: mark the field on the map → pick the current crop → field report (four threat cards and a year calendar) → three rotation options in a carousel.
+Open http://localhost:3000.
 
-- Weather data: live request to the NASA POWER Daily API (`T2M_MAX`, `T2M_MIN`, `PRECTOTCORR`, 1981 to the latest finished season), cached in the browser.
-- Indicators: ETCCDI indices (FD, CDD, TX90p, Rx1day, R20mm). Colours rank the latest season against the same place's past seasons (`PROJECT_RISKS_AND_UI.md` section 4).
-- Rotation options: keep the current crop; add a cover crop; add a legume. Growing periods from FAO Table 4. Every statement in the app links to a numbered source.
-- Not tested yet: the POWER request and map tiles from a real browser. The development sandbox blocks both hosts, so the layout was checked with synthetic numbers that are not part of the app.
-- Stack: Vite, React, Tailwind CSS, Leaflet (react-leaflet), Embla Carousel, lucide icons. Map tiles: Esri World Imagery and OpenStreetMap. List these in the submission References.
+Keys: the AgroMonitoring keys are written in the code (`src/lib/logic/index.ts`, `src/app/api/route.ts`), as in the original repository. The Mapbox token is the one change from the original: it is read from `NEXT_PUBLIC_MAPBOX_TOKEN`.
+
+### Known limits of the copied code
+
+Checked by reading the code on 2026-11-15:
+
+- The six indicator cards are computed from fixed default numbers in `src/lib/store/use-metrics.tsx`. `setData` is never called, so the cards show the same result for every field.
+- The NDVI layer is one fixed image URL with fixed coordinates near 37.03° N, 120.92° W (California), in `src/features/map/index.tsx`.
+- The NVDI / Satellite switch changes state but does not change the map.
+- Requests to AgroMonitoring use `http://`, not `https://`.
+- Tested here: the page renders with a local Postgres. Not tested here: Mapbox and AgroMonitoring, because the development sandbox blocks both hosts.
 
 ## Idea
 
@@ -44,4 +73,4 @@ Confirmed working: **NASA POWER** Daily API — global daily temperature and pre
 
 ## AI disclosure
 
-An AI assistant (Claude) was used to read and summarise the challenge pages and rules, check data source links, and draft and structure these documents, and write the prototype code. The idea of a field tracker with an intuitive interface came from the team.
+An AI assistant (Claude) was used to read and summarise the challenge pages and rules, check data source links, and draft and structure these documents, write the earlier prototype code, and copy the teammate's app into this repository. The idea of a field tracker with an intuitive interface came from the team.
