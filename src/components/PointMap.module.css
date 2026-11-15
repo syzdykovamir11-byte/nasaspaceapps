@@ -1,0 +1,38 @@
+.wrap {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+  background: var(--map-water);
+}
+
+.kaz { fill: var(--map-land); fill-opacity: 1; stroke: var(--map-border); }
+.other { fill: var(--map-land-other); fill-opacity: 1; stroke: var(--map-border); }
+.provinceLine { stroke: var(--map-border); stroke-opacity: 0.6; fill: none; }
+
+
+.label {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: none;
+  font-size: var(--step--1);
+  padding: var(--space-1) var(--space-2);
+}
+.label::before { display: none; }
+
+/* The wrapper clips overflow, so draw focus rings inside the map. */
+.wrap :focus-visible { outline-offset: -3px; }
+
+.borderOnImagery { fill: none; stroke: #ffffff; stroke-opacity: 0.9; }
+.provinceOnImagery { stroke: #ffffff; stroke-opacity: 0.7; fill: none; }
+
+.fill { height: 100%; border: 0; border-radius: 0; }
+
+/* Full-screen layout: keep zoom buttons and attribution inside the strip between the floating panels. */
+.fill :global(.leaflet-left) { left: var(--map-left-inset, 0px); }
+.fill :global(.leaflet-right) { right: var(--map-right-inset, 0px); }

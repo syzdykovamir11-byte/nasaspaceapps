@@ -1,0 +1,230 @@
+.section { margin-top: 0; }
+.section h2 { margin: 0 0 var(--space-2); }
+
+.frostSummary { margin-top: var(--space-4); padding: var(--space-3) 0; border-block: 1px solid var(--border); }
+.frostSummary > p { margin: 0; }
+.frostSummary .frostSource { margin-top: var(--space-1); color: var(--muted); font-size: var(--step--1); }
+
+.muted { color: var(--muted); font-size: var(--step-0); }
+
+.fieldset {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  margin: var(--space-4) 0 0;
+  background: var(--surface);
+}
+/* Legend as a plain heading inside the box: no border line through wrapped text, same left edge as the fields. */
+.fieldset legend { float: left; width: 100%; padding: 0; margin-bottom: var(--space-3); font-weight: 600; text-wrap: balance; }
+.fieldset legend + * { clear: both; }
+
+.selects { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-3); }
+
+.selectLabel { display: grid; gap: var(--space-1); font-size: var(--step-0); }
+.selectLabel select {
+  min-height: 44px;
+  font: inherit;
+  padding: var(--space-2) var(--space-2);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.radios { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
+.radio { display: flex; align-items: center; gap: var(--space-2); min-height: 44px; cursor: pointer; }
+.radio input { width: 20px; height: 20px; accent-color: var(--text); }
+
+.note {
+  max-width: none;
+  margin: var(--space-3) 0 0;
+  padding: var(--space-2) var(--space-3);
+  border-left: 4px solid var(--watch);
+  background: var(--watch-bg);
+  border-radius: var(--radius-sm);
+  font-size: var(--step-0);
+}
+
+
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-4);
+}
+.current { border-top: 4px solid var(--text); }
+
+.cardTitle { margin: 0 0 var(--space-2); font-size: var(--step-1); }
+
+/* Option buttons that open their card. Closed by default. */
+.optionList { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
+.optionItem { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.optionItem.current { border-top: 4px solid var(--text); }
+.optionButton {
+  width: 100%;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.optionButton:hover { background: var(--bg); }
+.optionButton:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.optionText { display: grid; gap: 2px; }
+.optionTitle { font-weight: 600; font-size: var(--step-0); }
+.optionLine { color: var(--muted); font-size: var(--step--1); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-top: var(--space-1); }
+.chip {
+  font-size: var(--step--1);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.chevron { flex: none; transition: transform var(--dur) var(--ease-out); }
+.optionButton[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+/* Height animation without measuring: the grid row goes from 0fr to 1fr. */
+.optionPanel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 280ms var(--ease-out), opacity 200ms var(--ease-out);
+}
+.optionPanel[data-open="true"] { grid-template-rows: 1fr; opacity: 1; }
+.optionPanelInner { min-height: 0; overflow: hidden; }
+.optionPanel .card { border: 0; border-top: 1px solid var(--border); border-radius: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .optionPanel, .chevron { transition: none; }
+}
+
+.sequence { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-1); }
+.sequence li { padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); background: var(--bg); }
+.yearNo { color: var(--muted); font-size: var(--step--1); margin-right: var(--space-1); }
+.changed { outline: 2px solid var(--text); font-weight: 600; }
+.changedTag { color: var(--text); font-weight: 600; font-size: var(--step--1); }
+
+.why { margin: 0 0 var(--space-3); }
+
+.facts { margin: 0; display: grid; gap: var(--space-2); font-size: var(--step-0); }
+.facts div { display: grid; gap: var(--space-1); border-top: 1px solid var(--border); padding-top: var(--space-2); }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-weight: 600; }
+
+.details { margin-top: var(--space-3); font-size: var(--step-0); }
+.details summary {
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--accent);
+  padding: var(--space-2) 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.details ul { margin: var(--space-2) 0 0; padding-left: var(--space-5); color: var(--muted); }
+.details li { margin-bottom: var(--space-2); }
+.details p { margin: var(--space-2) 0 0; color: var(--muted); }
+
+.src { font-size: var(--step--1); white-space: nowrap; }
+
+.sources { margin: 0; padding-left: var(--space-5); font-size: var(--step--1); color: var(--muted); }
+.sources li { margin-bottom: var(--space-1); }
+
+.hint { margin: 0 0 var(--space-2); color: var(--muted); font-size: var(--step-0); }
+/* Hints under a single field stay small: they are labels, not instructions. */
+.selectLabel .hint { font-size: var(--step--1); }
+.selectLabel input {
+  min-height: 44px;
+  font: inherit;
+  padding: var(--space-2) var(--space-2);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  max-width: 10rem;
+}
+.error { color: var(--unusual); font-size: var(--step--1); font-weight: 600; }
+.ddNote { display: block; font-weight: 400; color: var(--muted); font-size: var(--step--1); margin-top: var(--space-1); }
+.caveat { margin: var(--space-3) 0 0; font-size: var(--step-0); color: var(--muted); border-left: 3px solid var(--border); padding-left: var(--space-2); }
+
+.stepTitle { margin: var(--space-5, 24px) 0 0; font-size: var(--step-1); }
+.faq { margin-top: var(--space-5, 24px); padding-top: var(--space-3); border-top: 1px solid var(--border); }
+.faq .stepTitle { margin-top: 0; }
+
+.aiBox {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.aiTitle { margin: 0 0 var(--space-2); font-size: var(--step-1); }
+.aiList { margin: 0 0 var(--space-2); padding-left: 1.2em; }
+.aiList li { margin-bottom: var(--space-2); }
+.aiLabel { margin: var(--space-2) 0 0; color: var(--muted); font-size: var(--step--1); }
+.aiButton {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  font-weight: 600;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.aiButton:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.glanceWrap { margin-top: var(--space-4); }
+.glanceCaption { margin: 0 0 var(--space-2); color: var(--muted); font-size: var(--step--1); }
+
+.glance {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--step--1);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.glance th, .glance td { padding: var(--space-2) var(--space-3); text-align: left; vertical-align: top; border-top: 1px solid var(--border); }
+.glance thead th { border-top: 0; color: var(--muted); font-weight: 600; }
+.glance tbody th { font-weight: 600; }
+
+.glanceList { display: none; list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.glanceList li { max-width: none; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border); }
+.glanceList li:first-child { border-top: 0; }
+.glanceItemTitle { margin: 0 0 var(--space-1); font-weight: 600; }
+.glanceList dl { margin: 0; display: grid; gap: var(--space-1); font-size: var(--step--1); }
+.glanceList dt { color: var(--muted); }
+.glanceList dd { margin: 0; }
+
+/* Switch on the width of the panel that holds the table (the floating results panel is 460px wide). */
+@container results (max-width: 639px) {
+  .glance { display: none; }
+  .glanceList { display: block; }
+}
+
+.selectLabel select:hover, .selectLabel input:hover { border-color: var(--text); }
+.details summary:hover { text-decoration-thickness: 2px; }
+.radio:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.selectLabel select:active, .selectLabel input:active { border-color: var(--text); }
+.details summary:active { opacity: 0.8; }
+.radio:active { opacity: 0.8; }
+
+.nowrap { white-space: nowrap; }
+
+/* Values farmers compare are body size; column headers and labels stay small. */
+.glance td, .glance tbody th, .glanceList dd, .glanceItemTitle { font-size: var(--step-0); }
