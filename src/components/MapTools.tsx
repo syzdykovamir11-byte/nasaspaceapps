@@ -184,16 +184,17 @@ export function FieldTools({
           <p role="status" className={styles.error}>
             {drawError ?? ""}
           </p>
-          <p className={styles.small}>You can also enter coordinates below.</p>
-          <div className={styles.row}>
-            <button type="button" className={styles.primary} onClick={onFinish} aria-disabled={draftCount < 3 || undefined}>
+          <p className={styles.small}>Finish, Undo and Cancel are on the map. You can also enter coordinates below.</p>
+          {/* Screen-reader and keyboard copy of the map buttons; hidden visually so they are not shown twice. */}
+          <div className="sr-only">
+            <button type="button" onClick={onFinish} aria-disabled={draftCount < 3 || undefined}>
               Finish field
             </button>
-            <button type="button" className={styles.secondary} onClick={onUndo} aria-disabled={draftCount === 0 || undefined}>
+            <button type="button" onClick={onUndo} aria-disabled={draftCount === 0 || undefined}>
               Undo last corner
             </button>
-            <button type="button" className={styles.secondary} onClick={onCancel}>
-              Cancel
+            <button type="button" onClick={onCancel}>
+              Cancel drawing
             </button>
           </div>
         </div>
@@ -202,22 +203,27 @@ export function FieldTools({
         <div className={styles.fieldCard}>
           <p ref={fieldRef} tabIndex={-1}>
             <strong>Your field</strong>
-            {field.areaHa !== null && <> · {field.areaHa >= 10 ? Math.round(field.areaHa) : field.areaHa.toFixed(1)}&nbsp;ha</>} · centre{" "}
-            {field.center[0].toFixed(3)}° N, {field.center[1].toFixed(3)}° E
-          </p>
-          <p className={styles.small}>
-            Weather for your field comes from the NASA POWER grid cell around its centre (tens of kilometres across), with
-            a live request. Without internet only the 4 demo places work. The season window (1 Apr–30 Sep) and the frost
-            split at 15 July were chosen for northern Kazakhstan; for a field elsewhere, check them first.
+            {field.areaHa !== null && <> · {field.areaHa >= 10 ? Math.round(field.areaHa) : field.areaHa.toFixed(1)}&nbsp;ha</>}
+            <span className={styles.coords}>
+              {field.center[0].toFixed(3)}° N, {field.center[1].toFixed(3)}° E
+            </span>
           </p>
           <div className={styles.row}>
             <button type="button" className={styles.primary} onClick={onCheck} aria-disabled={checking || undefined}>
               {checking ? "Loading NASA POWER data…" : "Check this field"}
             </button>
             <button type="button" className={styles.secondary} onClick={onClear}>
-              Clear field
+              Clear
             </button>
           </div>
+          <details className={styles.more}>
+            <summary>Where the weather comes from</summary>
+            <p className={styles.small}>
+              NASA POWER, for the grid cell around the field&apos;s centre (tens of kilometres across), with a live
+              request. Without internet only the 4 demo places work. The season window (1 Apr–30 Sep) and the frost split
+              at 15 July were chosen for northern Kazakhstan; for a field elsewhere, check them first.
+            </p>
+          </details>
         </div>
       )}
       <details className={styles.typed}>
