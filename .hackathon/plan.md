@@ -38,3 +38,27 @@ Recommended:
 - Add NASA POWER soil wetness to the Season tab as one more card or line (this season vs 1981–2025 at the same point). This is NASA data and covers the challenge's "soil moisture" item.
 - Add SoilGrids topsoil values (SOC, pH, clay/sand) for the 4 demo places as a "Soil (modelled)" block on the Crops tab. A build script fetches them and saves them to `data/soil/` (offline). Gemini may cite them. Labelled as modelled 250 m estimates, not a field test, with the advice to get a lab soil test.
 - Do not let soil values change the rotation rules. They are context only, since no rule mapping them to crops was agreed.
+
+# Plan: fewer words on screen, details behind buttons (draft, 15 Nov 2026)
+
+Status: waiting for the user's approval. Nothing below is built.
+
+Origin: the user asked for a simpler, calmer interface with secondary information behind a button. A first redesign was made on an earlier Mapbox copy of the app (branch history, commit 17a4e7d) and the user liked it. This plan carries the same ideas to the current app. Source of the problems below: the screenshots in `docs/screenshots/` (01 and 04), not yet re-checked in a running browser.
+
+## What is already fine
+- Colours: warm light background, one green accent, status shown by icon and word, dark mode. The tokens are in `src/app/globals.css`. The palette from the first redesign is almost the same, so copying it would change nothing.
+- Threat cards: "What you can do" and "How we know" are already closed disclosures.
+
+## Proposed changes
+1. Left panel (`src/app/page.tsx`, `src/app/page.module.css`): the long satellite-layer description under "Map view" (MODIS name, zoom level, pixel size, clouds, seams) moves into a closed "About this layer" disclosure. The layer name stays visible.
+2. Rotations tab (`src/components/RotationSection.tsx`, `RotationSection.module.css`): the long notes ("No lower water need option is shown: …", "Compare at a glance. Frost years from …") become one short line each with a closed "Why?" or "How to read this" disclosure. The numbers and source tags stay, so every statement keeps its source.
+3. A final check in a browser at desktop and phone width: screenshots, `npm run typecheck`, `npm run lint`, `npm test`.
+
+Out of scope: data, rules for rotations, the Gemini summary, the Data tab, anything new.
+
+## Needs a decision
+- Palette. If the user finds the current palette too "AI-looking", say what is wrong (too green, too beige, too flat). One file changes (`globals.css`), but I will not guess.
+- Whether to push this to `main` (production redeploys) or keep it on the branch until the user has looked at it.
+
+## Not verified
+- The repository rules ask for `design-loop`, `frontend-reviewer` and `frontend-qa` skills. They are not in this session, so the review step will be my own check against the screenshots.
