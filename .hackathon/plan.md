@@ -41,7 +41,7 @@ Recommended:
 
 # Plan: fewer words on screen, details behind buttons (draft, 15 Nov 2026)
 
-Status: waiting for the user's approval. Nothing below is built.
+Status (15 Nov, approved, done): checked in a running browser. Items 1 and 2 were already done on main ("About this imagery" disclosure; Rotations notes moved to "Questions"); the screenshots in docs/screenshots were older than the code. One real problem was found and fixed instead: the demo-place buttons overflowed the left panel on desktop (the region line "North Kazakhstan region" did not wrap). Palette unchanged (no answer on what to change). Not pushed to main.
 
 Origin: the user asked for a simpler, calmer interface with secondary information behind a button. A first redesign was made on an earlier Mapbox copy of the app (branch history, commit 17a4e7d) and the user liked it. This plan carries the same ideas to the current app. Source of the problems below: the screenshots in `docs/screenshots/` (01 and 04), not yet re-checked in a running browser.
 
