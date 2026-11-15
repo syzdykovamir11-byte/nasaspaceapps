@@ -1,0 +1,41 @@
+.wrap { margin-top: var(--space-4); }
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 2px;
+  table-layout: fixed;
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+}
+
+.caption { caption-side: top; text-align: left; color: var(--muted); font-size: var(--step--1); margin-bottom: var(--space-2); }
+
+.table th { font-weight: 600; color: var(--muted); padding: var(--space-1) 0; text-align: center; }
+.table th.season { color: var(--text); border-top: 3px solid var(--text); }
+
+.rowHead { width: 4.6rem; text-align: left !important; color: var(--text) !important; }
+.unit { display: block; font-weight: 400; color: var(--muted); font-size: var(--step--1); }
+
+.table td {
+  text-align: center;
+  padding: var(--space-2) 0;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+}
+/* Single hue per row, light to dark; the number is always printed. */
+.frost { background: color-mix(in srgb, var(--map-border) calc(var(--tint) * 0.4), var(--surface)); }
+.rain { background: color-mix(in srgb, var(--data-rain) calc(var(--tint) * 0.35), var(--surface)); }
+
+.note { margin: var(--space-2) 0 0; color: var(--muted); font-size: var(--step-0); }
+
+.vertical { display: none; width: 100%; border-collapse: separate; border-spacing: 2px; font-variant-numeric: tabular-nums; font-size: var(--step--1); }
+.vertical th { text-align: left; font-weight: 400; color: var(--muted); padding: var(--space-1) var(--space-2); }
+.vertical thead th { font-weight: 600; font-size: var(--step--1); }
+.vertical td { text-align: right; padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm); color: var(--text); }
+.seasonRow th { font-weight: 700; color: var(--text); }
+
+@media (max-width: 559px) {
+  .horizontal { display: none; }
+  .vertical { display: table; }
+}

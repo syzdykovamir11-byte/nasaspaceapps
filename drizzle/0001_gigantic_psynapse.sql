@@ -1,1 +1,0 @@
-ALTER TABLE "fields" DROP COLUMN IF EXISTS "area";

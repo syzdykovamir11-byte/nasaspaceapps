@@ -1,1 +1,0 @@
-ALTER TABLE "fields" ADD COLUMN "polygon_id" text;

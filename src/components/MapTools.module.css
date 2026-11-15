@@ -1,0 +1,87 @@
+.switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+
+.switchButton {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.switchButton:hover { background: var(--bg); }
+.switchButton:active { transform: scale(0.98); }
+.switchButton[aria-pressed="true"] {
+  border-color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--text);
+  font-weight: 600;
+}
+
+.note { margin-top: var(--space-2); font-size: var(--step--1); color: var(--muted); }
+.note p { margin: 0 0 var(--space-2); }
+
+.legend { margin-top: var(--space-2); }
+.ramp { height: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.ticks { position: relative; height: 1.4em; margin-top: var(--space-1); }
+.ticks span { position: absolute; transform: translateX(-50%); }
+.ticks .tickStart { transform: none; }
+.ticks .tickEnd { transform: translateX(-100%); }
+.error:empty { margin: 0; }
+.small { font-size: var(--step--1); color: var(--muted); margin: var(--space-1) 0 0; }
+
+.tools { margin-top: var(--space-3); display: grid; gap: var(--space-3); }
+
+.row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+
+.primary, .secondary {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.primary { border: 1px solid var(--text); background: var(--text); color: var(--surface); font-weight: 600; }
+.secondary { border: 1px solid var(--control-border); background: var(--surface); color: var(--text); }
+.primary:hover:not([aria-disabled="true"]) { opacity: 0.9; }
+.secondary:hover:not([aria-disabled="true"]) { background: var(--bg); }
+.primary:active, .secondary:active { transform: scale(0.98); }
+.primary[aria-disabled="true"], .secondary[aria-disabled="true"] { opacity: 0.4; cursor: default; }
+.primary { justify-self: start; }
+
+.drawBox, .fieldCard {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: var(--space-3) var(--space-4);
+}
+.drawBox p, .fieldCard p { margin: 0 0 var(--space-1); }
+.drawBox p:focus, .fieldCard p:focus { outline-offset: 4px; }
+.instruction { font-weight: 600; }
+
+.typed summary {
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: var(--space-2) 0;
+}
+.typed summary:hover { text-decoration-thickness: 2px; }
+.typedForm { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-end; margin-top: var(--space-2); }
+.typedForm label { display: grid; gap: var(--space-1); font-size: var(--step--1); }
+.typedForm input {
+  min-height: 44px;
+  width: 9rem;
+  font: inherit;
+  padding: var(--space-2);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.error { color: var(--unusual); font-weight: 600; }

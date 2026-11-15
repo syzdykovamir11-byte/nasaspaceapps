@@ -1,19 +1,130 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+  --bg: #f6f4ee;
+  --surface: #ffffff;
+  --text: #1f2a1f;
+  --muted: #5a6658;
+  --border: #d9d6cb;
+  --accent: #2f6b3a;
+  --normal: #2f6b3a;
+  --normal-bg: #e7f1e6;
+  --watch: #8a5a00;
+  --watch-bg: #fbf0d9;
+  --unusual: #a3271c;
+  --unusual-bg: #fbe5e2;
+  --map-water: #dfe6e8;
+  --map-land: #eef0e4;
+  --map-land-other: #e2e2da;
+  --map-border: #7d8778;
+  /* Borders of form controls and inactive indicators: 3:1 or more against --surface. */
+  --control-border: #7d8778;
+  /* Data tint for precipitation only; never used for actions or status. */
+  --data-rain: #3f6f86;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+
+  /* Type scale, ratio 1.2, base 17px. */
+  --step--1: 0.885rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.275rem;
+  --step-2: 1.53rem;
+  --step-3: 1.836rem;
+  --metric-size: clamp(2.25rem, 4vw, 3rem);
+
+  /* Spacing, 4/8pt. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 200ms;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161a15;
+    --surface: #1f251e;
+    --text: #e8ece4;
+    --muted: #a6b0a2;
+    --border: #364034;
+    --accent: #8cc897;
+    --normal: #8cc897;
+    --normal-bg: #22331f;
+    --watch: #e8b95a;
+    --watch-bg: #3a2f17;
+    --unusual: #f09389;
+    --unusual-bg: #3d1f1b;
+    --map-water: #1a2226;
+    --map-land: #262e24;
+    --map-land-other: #20251f;
+    --map-border: #6f7a6b;
+    --control-border: #6f7a6b;
+    --data-rain: #7fb3c9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; }
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
 
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--step-0);
+  line-height: 1.5;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
+h1, h2, h3 { line-height: 1.2; text-wrap: balance; }
+h1 { font-size: var(--step-3); }
+h2 { font-size: var(--step-2); }
 
-@layer base {
-  :root {
-    --radius: 0.5rem;
-  }
+/* Comfortable measure for running text; cards and tables keep the full column. */
+main p, main li, main dd, main caption, aside p { max-width: 58ch; }
+
+a { color: var(--accent); }
+
+button, select, input { font: inherit; }
+
+/* Leaflet ships its own fonts and colours, and leaflet.css loads after this file, so these rules use
+   "html" for higher specificity. They bring the map into the page's type and colour system. */
+html .leaflet-container,
+html .leaflet-container .leaflet-tooltip,
+html .leaflet-container .leaflet-bar a,
+html .leaflet-container .leaflet-control-attribution { font-family: inherit; font-size: var(--step--1); }
+html .leaflet-container .leaflet-bar a { font-size: var(--step-1); width: 44px; height: 44px; line-height: 44px; text-decoration: none; }
+html .leaflet-container a { color: var(--accent); }
+html .leaflet-container .leaflet-control-attribution a { text-decoration: underline; }
+html .leaflet-container .leaflet-control-attribution { background: var(--surface); color: var(--muted); }
+/* Leave the bottom-left corner to the 44px zoom buttons, so a wrapped attribution never covers them. */
+html .leaflet-container .leaflet-bottom.leaflet-right .leaflet-control-attribution { max-width: calc(100vw - 120px); }
+@media (min-width: 1024px) {
+  html .leaflet-container .leaflet-bottom.leaflet-right .leaflet-control-attribution { max-width: none; }
+}
+html .leaflet-container .leaflet-bar a { background: var(--surface); color: var(--text); border-color: var(--border); }
+html .leaflet-container .leaflet-bar a:hover { background: var(--bg); }
+
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
