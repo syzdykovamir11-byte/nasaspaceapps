@@ -1,9 +1,16 @@
 "use client";
 
-import React from "react";
-import { useStats } from "~/lib/logic/hooks";
+import React, { useEffect, useState } from "react";
+import { ChevronDown, CloudOff, Loader } from "lucide-react";
+import { useLandMonitoringStatus, useStats } from "~/lib/logic/hooks";
 import { IndicatorCard } from "./metrics-display";
 import useAgriculturalStore from "~/lib/store/use-metrics";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "~/components/collapsible";
+import { cn } from "~/lib/utils";
 
 interface StatData {
   key: string;
@@ -17,77 +24,119 @@ interface StatData {
   mean: number;
 }
 
-interface StatItemProps {
-  title: string;
-  value: number | undefined;
-}
+const INDEX_NAMES: Record<string, string> = {
+  ndvi: "Plant greenness (NDVI)",
+  evi: "Plant growth (EVI)",
+  ndwi: "Water in plants (NDWI)",
+  dswi: "Disease and water stress (DSWI)",
+  nri: "Nitrogen (NRI)",
+};
 
-const StatItem: React.FC<StatItemProps> = ({ title, value }) => (
-  <div className="px-4 py-1 text-sm text-center rounded-lg duration-200 hover:bg-neutral-700 bg-neutral-700/80 flex flex-col">
-    <p className="uppercase font-mono text-sm text-neutral-400 mb-0.5">
-      {title}
+const panel = "bg-paper border border-line shadow-lg rounded-2xl";
+
+const StatItem: React.FC<{ title: string; value: number | undefined }> = ({
+  title,
+  value,
+}) => (
+  <div className="rounded-lg bg-sand px-2 py-1.5 text-center">
+    <p className="text-xs text-mute">{title}</p>
+    <p className="font-medium tabular-nums">
+      {value !== undefined ? value.toFixed(2) : "–"}
     </p>
-    <p>{value !== undefined ? value.toFixed(4) : "N/A"}</p>
   </div>
 );
 
 const StatsDisplay: React.FC = () => {
-  const [queries, success] = useStats();
-  const { getIndicators } = useAgriculturalStore();
-  const indicators = getIndicators();
+  const { hasField, isLoading, isError } = useLandMonitoringStatus();
+  const [queries, success] = useStats() as [
+    { data?: StatData; isSuccess: boolean }[],
+    boolean
+  ];
+  const { getIndicators, setData } = useAgriculturalStore();
+  const [open, setOpen] = useState(false);
 
-  if (!success) {
-    return <div>Loading...</div>;
+  const stats = success
+    ? queries.map((q) => q.data).filter((s): s is StatData => !!s)
+    : [];
+  const statsKey = stats.map((s) => `${s.key}:${s.median}`).join("|");
+
+  // Feed the indicators with the statistics of the selected field.
+  useEffect(() => {
+    if (!stats.length) return;
+    setData(Object.fromEntries(stats.map((s) => [s.key, s])));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statsKey]);
+
+  if (!hasField) return null;
+
+  if (isError) {
+    return (
+      <div className={cn(panel, "p-4 flex gap-3")}>
+        <CloudOff size={22} className="text-wheat shrink-0 mt-0.5" />
+        <div>
+          <p className="font-semibold">No satellite image for this date</p>
+          <p className="text-sm text-mute leading-5 mt-1">
+            Satellites do not pass every day. Try the day before or after with
+            the arrows at the top.
+          </p>
+        </div>
+      </div>
+    );
   }
 
-  return (
-    <div className="space-y-2">
-      {queries && queries.length > 0 && (
-        <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-neutral-900/80">
-          <IndicatorCard
-            title="Vegetation Stress"
-            status={indicators.vegetationStress}
-          />
-          <IndicatorCard
-            title="Water Deficiency"
-            status={indicators.waterDeficiency}
-          />
-          <IndicatorCard
-            title="Drought & Pest Vulnerability"
-            status={indicators.droughtPestVulnerability}
-          />
-          <IndicatorCard
-            title="Crop Productivity"
-            status={indicators.cropProductivity}
-          />
-          <IndicatorCard
-            title="Pesticide Efficiency"
-            status={indicators.pesticideEfficiency}
-          />
-          <IndicatorCard
-            title="Soil & Vegetation Health"
-            status={indicators.soilVegetationHealth}
-          />
-        </div>
-      )}
-      {queries.map((query) => {
-        const stat = query.data as StatData;
-        console.log(stat);
+  if (isLoading || !success || !stats.length) {
+    return (
+      <div className={cn(panel, "p-4 flex items-center gap-3")}>
+        <Loader size={20} className="animate-spin text-leaf" />
+        Loading satellite data…
+      </div>
+    );
+  }
 
-        return (
-          <div
-            key={stat.key}
-            className="bg-neutral-900/80 backdrop-blur-md rounded-xl overflow-hidden p-1 gap-1 grid grid-cols-3"
-          >
-            <div className="col-span-3 p-1 text-neutral-500 uppercase font-mono">
-              {stat.key}
+  const indicators = getIndicators();
+
+  return (
+    <div className={cn(panel, "p-2 flex flex-col gap-2")}>
+      <h2 className="font-semibold px-2 pt-1">Field health</h2>
+      <IndicatorCard title="Plant stress" status={indicators.vegetationStress} />
+      <IndicatorCard title="Water" status={indicators.waterDeficiency} />
+      <IndicatorCard
+        title="Drought and pests"
+        status={indicators.droughtPestVulnerability}
+      />
+      <IndicatorCard title="Productivity" status={indicators.cropProductivity} />
+      <IndicatorCard
+        title="Pesticide use"
+        status={indicators.pesticideEfficiency}
+      />
+      <IndicatorCard
+        title="Soil and plants"
+        status={indicators.soilVegetationHealth}
+      />
+
+      <Collapsible open={open} onOpenChange={setOpen}>
+        <CollapsibleTrigger className="w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-leaf font-medium hover:bg-sand duration-200">
+          {open ? "Hide the numbers" : "Show the numbers"}
+          <ChevronDown
+            size={18}
+            className={cn("duration-200", open && "rotate-180")}
+          />
+        </CollapsibleTrigger>
+        <CollapsibleContent className="flex flex-col gap-3 px-1 pt-1 pb-2">
+          {stats.map((stat) => (
+            <div key={stat.key}>
+              <p className="text-sm text-mute px-1 mb-1">
+                {INDEX_NAMES[stat.key] ?? stat.key.toUpperCase()}
+              </p>
+              <div className="grid grid-cols-3 gap-1">
+                <StatItem title="Lowest" value={stat.min} />
+                <StatItem title="Middle" value={stat.median} />
+                <StatItem title="Highest" value={stat.max} />
+              </div>
             </div>
-            <StatItem title="MIN" value={stat.min} />
-            <StatItem title="MEDIAN" value={stat.median} />
-            <StatItem title="MAX" value={stat.max} />
-          </div>
-        );
-      })}
+          ))}
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   );
 };

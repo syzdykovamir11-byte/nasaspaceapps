@@ -3,20 +3,29 @@ import { fetchJson, getAgroMonitoringData } from ".";
 import { useLandStore } from "../store/land-store";
 import { useViewStore } from "../store/view-store";
 
-export function useLandMonitoring() {
+function useLandQuery() {
   const { selectedLand } = useLandStore();
   const { currentDate } = useViewStore();
 
-  const { data } = useQuery({
-    queryKey: ["satelite", selectedLand?.name],
+  return useQuery({
+    queryKey: ["satelite", selectedLand?.name, currentDate.toDateString()],
     queryFn: () =>
       getAgroMonitoringData(selectedLand!.polygonId, currentDate.toISOString()),
 
     enabled: !!selectedLand,
     staleTime: Infinity,
+    retry: false,
   });
+}
 
-  return data;
+export function useLandMonitoring() {
+  return useLandQuery().data;
+}
+
+export function useLandMonitoringStatus() {
+  const { selectedLand } = useLandStore();
+  const { isLoading, isError } = useLandQuery();
+  return { hasField: !!selectedLand, isLoading, isError };
 }
 
 export function useStats() {
@@ -25,7 +34,7 @@ export function useStats() {
   const queries = useQueries({
     queries: Object.entries(data?.stats ?? []).map(([key, data]) => {
       return {
-        queryKey: ["stat", key],
+        queryKey: ["stat", key, data],
         queryFn: async () => {
           const metrics = await fetchJson(data);
           return { key, ...metrics };

@@ -37,34 +37,43 @@ export const CreateLandModal = () => {
   };
 
   return (
-    <DraggableModal modalKey={CREATE_FIELD_MODAL_KEY} title="Create new field">
-      <div className="w-56">
+    <DraggableModal modalKey={CREATE_FIELD_MODAL_KEY} title="New field">
+      <div className="w-64">
+        <label className="block text-sm text-mute mb-1" htmlFor="crop">
+          What grows here?
+        </label>
         <Input
+          id="crop"
           type="text"
-          placeholder="Crop name"
+          placeholder="For example: wheat"
           value={crop}
           onChange={(e) => setCrop(e.target.value)}
-          className="mb-2"
+          className="mb-3"
         />
+        <label className="block text-sm text-mute mb-1" htmlFor="field-name">
+          Field name
+        </label>
         <Input
+          id="field-name"
           type="text"
           placeholder={`Field ${Math.ceil(Math.random() * 100)}`}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mb-5"
+          className="mb-4"
         />
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => close()}
-            className="text-neutral-400 px-4 py-1 rounded-lg"
+            className="text-mute px-4 py-2 rounded-xl hover:bg-sand duration-200"
           >
             Cancel
           </button>
           <button
             onClick={handleCreate}
-            className="bg-green-600/50 text-green-300 px-4 py-1 rounded-lg"
+            disabled={!name.trim()}
+            className="bg-leaf text-paper font-medium px-4 py-2 rounded-xl hover:bg-leaf-dark duration-200 disabled:opacity-40"
           >
-            Create
+            Save field
           </button>
         </div>
       </div>

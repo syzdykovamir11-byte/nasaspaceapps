@@ -23,7 +23,7 @@ export const DraggableModal: React.FC<ModalProps> = ({
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && close()}>
       <Dialog.Portal>
         <Dialog.Content
-          className="fixed bg-neutral-900/80 shadow-sm rounded-xl overflow-hidden bottom-8 left-8 p-2 backdrop-blur-md"
+          className="fixed bg-paper border border-line text-ink shadow-xl rounded-2xl overflow-hidden bottom-8 left-6 p-3"
           style={{
             transform: `translate(${position.x}px, ${position.y}px)`,
             zIndex: 1000,
@@ -33,8 +33,8 @@ export const DraggableModal: React.FC<ModalProps> = ({
             className="px-1 mb-3 cursor-move flex justify-between items-center"
             onMouseDown={startDragging}
           >
-            <Dialog.Title className=" text-neutral-400">{title}</Dialog.Title>
-            <Dialog.Close className="text-neutral-500 hover:text-white duration-200 focus:outline-none">
+            <Dialog.Title className="font-semibold">{title}</Dialog.Title>
+            <Dialog.Close aria-label="Close" className="text-mute hover:text-ink text-xl leading-none px-1 duration-200 focus:outline-none">
               ×
             </Dialog.Close>
           </div>

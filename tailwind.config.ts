@@ -13,6 +13,14 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        paper: "#f6f1e7",
+        sand: "#ebe4d3",
+        line: "#d9d0bb",
+        ink: "#22301f",
+        mute: "#667060",
+        leaf: { DEFAULT: "#3d7a4a", dark: "#2f6039", soft: "#dfead6" },
+        wheat: { DEFAULT: "#b97a1f", soft: "#f6e7c8" },
+        clay: { DEFAULT: "#a8482a", soft: "#f5ddd2" },
       },
       borderRadius: {
         lg: "var(--radius)",

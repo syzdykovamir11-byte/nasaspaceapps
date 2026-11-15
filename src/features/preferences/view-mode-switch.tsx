@@ -5,7 +5,11 @@ import { useViewStore } from "~/lib/store/view-store";
 import { cn } from "~/lib/utils";
 
 type ViewMode = "nvdi" | "satellite";
-const VIEW_MODES = ["nvdi", "satellite"] as const;
+const VIEW_MODES = ["satellite", "nvdi"] as const;
+const LABELS: Record<ViewMode, string> = {
+  satellite: "Photo",
+  nvdi: "Plant health",
+};
 
 export const ViewModeSwitch: React.FC = () => {
   const {
@@ -18,21 +22,25 @@ export const ViewModeSwitch: React.FC = () => {
   };
 
   return (
-    <div className="bg-neutral-900/80 backdrop-blur-md rounded-xl overflow-hidden p-1 gap-1 flex">
-      {VIEW_MODES.map((mode) => (
-        <button
-          key={mode}
-          className={cn(
-            "flex-1 px-4 py-2 text-sm text-center rounded-lg duration-200",
-            viewMode === mode
-              ? "bg-neutral-800/80"
-              : "text-neutral-400 hover:bg-neutral-800"
-          )}
-          onClick={() => switchMode(mode)}
-        >
-          {mode.toUpperCase()}
-        </button>
-      ))}
+    <div className="bg-paper border border-line shadow-lg rounded-2xl p-1.5">
+      <p className="text-xs text-mute px-2 pb-1">Map view</p>
+      <div className="flex gap-1" role="group" aria-label="Map view">
+        {VIEW_MODES.map((mode) => (
+          <button
+            key={mode}
+            aria-pressed={viewMode === mode}
+            className={cn(
+              "flex-1 px-3 py-2 text-center rounded-xl duration-200",
+              viewMode === mode
+                ? "bg-leaf text-paper font-medium"
+                : "text-mute hover:bg-sand"
+            )}
+            onClick={() => switchMode(mode)}
+          >
+            {LABELS[mode]}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { getAgroMonitoringData } from "~/lib/logic";
 import { Land, qc, useLandStore } from "~/lib/store/land-store";
 import { useViewStore } from "~/lib/store/view-store";
@@ -14,16 +14,17 @@ export const FieldHeader = () => {
   };
 
   return (
-    <div className="flex justify-between text-neutral-400 mb-1 pl-1">
-      Fields
+    <div className="flex items-center justify-between pl-2 mb-1">
+      <h2 className="font-semibold">Your fields</h2>
       <button
         className={cn(
-          "px-3 h-6 rounded-md bg-neutral-800/80 hover:bg-neutral-700/80 duration-200",
-          isDrawingMode && "bg-green-600/50 text-green-300"
+          "flex items-center gap-1.5 pl-2.5 pr-3 h-9 rounded-xl bg-leaf text-paper font-medium hover:bg-leaf-dark duration-200",
+          isDrawingMode && "bg-wheat hover:bg-wheat"
         )}
         onClick={handleAddField}
       >
-        <Plus size={16} />
+        <Plus size={18} />
+        {isDrawingMode ? "Drawing…" : "Add field"}
       </button>
     </div>
   );
@@ -32,11 +33,12 @@ export const FieldHeader = () => {
 export const Field: React.FC<Land> = ({ id, name, coordinates, polygonId }) => {
   const { selectedLand, setSelectedLand } = useLandStore();
   const { currentDate } = useViewStore();
+  const selected = selectedLand?.id === id;
 
   const handleClick = () => {
     setSelectedLand({ id, name, coordinates, polygonId });
     qc.prefetchQuery({
-      queryKey: ["satelite", name],
+      queryKey: ["satelite", name, currentDate.toDateString()],
       queryFn: () =>
         getAgroMonitoringData(polygonId, currentDate.toISOString()),
     });
@@ -44,13 +46,15 @@ export const Field: React.FC<Land> = ({ id, name, coordinates, polygonId }) => {
 
   return (
     <button
+      aria-pressed={selected}
       className={cn(
-        "bg-neutral-800/80 hover:bg-neutral-700/80 duration-300 py-2 px-3 rounded-lg text-start",
-        selectedLand?.id === id && "bg-neutral-700/80"
+        "flex items-center justify-between gap-2 bg-sand hover:bg-leaf-soft duration-200 py-2.5 px-3 rounded-xl text-start",
+        selected && "bg-leaf-soft ring-2 ring-leaf font-semibold"
       )}
       onClick={handleClick}
     >
-      {name}
+      <span className="truncate">{name}</span>
+      {selected && <Check size={18} className="text-leaf shrink-0" />}
     </button>
   );
 };

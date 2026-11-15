@@ -11,8 +11,8 @@ export const Status = () => {
   if (!isOpen) return;
 
   return (
-    <div className="fixed bottom-8 left-1/2 bg-neutral-800/90 backdrop-blur text-neutral-400 rounded-xl p-2 pr-3 flex gap-3 -translate-x-1/2">
-      <Loader className="animate-spin" /> Loading
+    <div className="fixed bottom-8 left-1/2 bg-paper border border-line shadow-lg text-ink rounded-2xl p-2 pr-4 items-center flex gap-3 -translate-x-1/2">
+      <Loader className="animate-spin text-leaf" /> Saving your field…
     </div>
   );
 };
