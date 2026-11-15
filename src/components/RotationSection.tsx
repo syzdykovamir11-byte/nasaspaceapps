@@ -134,17 +134,12 @@ export function RotationSection({ series, input, onChange }: Props) {
       </fieldset>
 
       {chosenCrops.length > 0 && (
-        <p className={styles.hint}>Growing periods start from FAO guide values. Adjust them for your varieties <Src tag="C1" />.</p>
-      )}
-      {chosenCrops.length > 0 && (
         <details className={styles.details}>
-          <summary>Adjust days from sowing to harvest</summary>
+          <summary>Optional: days from sowing to harvest</summary>
           <fieldset className={styles.fieldset}>
             <legend>How many days from sowing to harvest?</legend>
             <p className={styles.hint}>
-              We start from FAO&apos;s global guide, which FAO calls a rough approximation and says local values are better{" "}
-              <Src tag="C1" />. Change it to what your own varieties need. The tool then counts how many past years had at
-              least that many days between frosts here.
+              Filled in from FAO guide values <Src tag="C1" />. Change them to fit your varieties.
             </p>
             <div className={styles.selects}>
               {chosenCrops.map((c) => (
@@ -159,25 +154,11 @@ export function RotationSection({ series, input, onChange }: Props) {
       {series && !chosenKey && <p className={styles.muted}>Choose a crop for each year to compare up to three rotations.</p>}
       {options && (
         <>
+          <h3 className={styles.stepTitle}>Your result</h3>
           {options.length === 1 && (
-            <p className={styles.note}>
-              No alternative could be built for this rotation from the sourced crop data. Our rules need FAO growing
-              periods or water values, which some of these crops do not have.
-            </p>
+            <p className={styles.note}>No alternative found for these crops. See the questions at the bottom.</p>
           )}
-          {options.length === 2 && (
-            <p className={styles.note}>Only 1 alternative could be built from the sourced crop data for this rotation.</p>
-          )}
-          {!options.some((o) => o.kind === "water") && (
-            <details className={styles.details}>
-              <summary>Why is there no lower-water option?</summary>
-              <p className={styles.muted}>
-              No &quot;lower water need&quot; option is shown: either no crop in our table has a lower FAO water need than
-              yours without repeating an option already shown, or that option was not among the two chosen for your
-              priority <Src tag="C1" />.
-              </p>
-            </details>
-          )}
+          {options.length === 2 && <p className={styles.note}>Only 1 alternative found for these crops.</p>}
           {series && <RotationSummary facts={buildFacts(options, period, series.label, priority)} />}
           <GlanceTable options={options} period={period} />
           <Carousel
@@ -191,39 +172,64 @@ export function RotationSection({ series, input, onChange }: Props) {
         </>
       )}
 
-      {lengths.length > 0 && (
-        <details className={`${styles.frostSummary} ${styles.details}`}>
-          <summary>Local frost history</summary>
-          <p>
-            Typically <strong>{Math.round(median(lengths))} days</strong> between frosts here (median).
-          </p>
-          <p className={styles.frostSource}>
-            NASA POWER · {period} · Area-average air temperature at 2 m
-          </p>
+      <div className={styles.faq}>
+        <h3 className={styles.stepTitle}>Questions</h3>
+        {lengths.length > 0 && (
+          <details className={styles.details}>
+            <summary>How long is the frost-free season here?</summary>
             <p>
-              Days between frosts here ({period}): typically {Math.round(median(lengths))} days (median), from{" "}
-              {Math.min(...lengths)} to {Math.max(...lengths)} days. Counted from the last day below 0&nbsp;°C before 15 July to
-              the first one on or after 15 July, using NASA POWER daily minimum air temperature at 2&nbsp;m, averaged over the
-              grid cell. This is air frost over a wide area, not ground frost in your field.
+              Typically <strong>{Math.round(median(lengths))} days</strong> (median), from {Math.min(...lengths)} to{" "}
+              {Math.max(...lengths)} days ({period}, NASA POWER).
               {dates &&
                 ` In 9 of 10 years the last spring frost was by ${formatDoy(dates.spring9of10)} and the first autumn frost came on or after ${formatDoy(dates.autumn9of10)}.`}
+            </p>
+            <p className={styles.muted}>
+              Counted from the last day below 0&nbsp;°C before 15 July to the first one on or after 15 July, using daily
+              minimum air temperature at 2&nbsp;m, averaged over the grid cell. This is air frost over a wide area, not
+              ground frost in your field.
               {noFrostYears > 0 &&
                 ` In ${noFrostYears} of ${ffy.length} years there was no spring or no autumn frost; the season is then counted from 1 January or to 31 December.`}
             </p>
+          </details>
+        )}
+        <details className={styles.details}>
+          <summary>Where do the days from sowing to harvest come from?</summary>
+          <p className={styles.muted}>
+            We start from FAO&apos;s global guide, which FAO calls a rough approximation and says local values are better{" "}
+            <Src tag="C1" />. You can change them to what your own varieties need under &quot;Optional: days from sowing to
+            harvest&quot;. The tool then counts how many past years had at least that many frost-free days here.
+          </p>
         </details>
-      )}
-
-      <details className={styles.details}>
-        <summary>Crop data sources</summary>
-        <ul className={styles.sources}>
-          {(Object.keys(SOURCES) as SourceTag[]).map((t) => (
-            <li key={t} id={`src-${t}`}>
-              [{t}] <a href={SOURCES[t].url} target="_blank" rel="noreferrer">{SOURCES[t].title}</a>, read{" "}
-              <span className={styles.nowrap}>{SOURCES[t].read}</span>.
-            </li>
-          ))}
-        </ul>
-      </details>
+        {options && !options.some((o) => o.kind === "water") && (
+          <details className={styles.details}>
+            <summary>Why is there no lower-water option?</summary>
+            <p className={styles.muted}>
+              Either no crop in our table has a lower FAO water need than yours without repeating an option already shown,
+              or that option was not among the two chosen for your priority <Src tag="C1" />.
+            </p>
+          </details>
+        )}
+        {options && options.length < 3 && (
+          <details className={styles.details}>
+            <summary>Why are there fewer than 3 options?</summary>
+            <p className={styles.muted}>
+              Our rules need FAO growing periods or water values, and some crops in the list do not have them{" "}
+              <Src tag="C1" />.
+            </p>
+          </details>
+        )}
+        <details className={styles.details}>
+          <summary>Where does the crop data come from?</summary>
+          <ul className={styles.sources}>
+            {(Object.keys(SOURCES) as SourceTag[]).map((t) => (
+              <li key={t} id={`src-${t}`}>
+                [{t}] <a href={SOURCES[t].url} target="_blank" rel="noreferrer">{SOURCES[t].title}</a>, read{" "}
+                <span className={styles.nowrap}>{SOURCES[t].read}</span>.
+              </li>
+            ))}
+          </ul>
+        </details>
+      </div>
     </section>
   );
 }

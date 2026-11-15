@@ -105,6 +105,10 @@
 .ddNote { display: block; font-weight: 400; color: var(--muted); font-size: var(--step--1); margin-top: var(--space-1); }
 .caveat { margin: var(--space-3) 0 0; font-size: var(--step-0); color: var(--muted); border-left: 3px solid var(--border); padding-left: var(--space-2); }
 
+.stepTitle { margin: var(--space-5, 24px) 0 0; font-size: var(--step-1); }
+.faq { margin-top: var(--space-5, 24px); padding-top: var(--space-3); border-top: 1px solid var(--border); }
+.faq .stepTitle { margin-top: 0; }
+
 .aiBox {
   margin-top: var(--space-4);
   padding: var(--space-3) var(--space-4);
