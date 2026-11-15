@@ -20,7 +20,8 @@ import { GIBS_LAYERS, gibsTileUrl, imageryDate, type ViewMode } from "@/lib/map/
 import { FieldTools, ImageryNote, ViewSwitch } from "@/components/MapTools";
 import type { DemoPoint, PowerSeries } from "@/lib/power/types";
 import { ROTATION_YEARS, RotationSection, type RotationInput } from "@/components/RotationSection";
-import { THREAT_TITLE, ThreatCard } from "@/components/ThreatCard";
+import { THREAT_TITLE, ThreatCard, ThreatRow } from "@/components/ThreatCard";
+import threatStyles from "@/components/ThreatCard.module.css";
 import { Tabs } from "@/components/Tabs";
 import styles from "./page.module.css";
 
@@ -427,6 +428,14 @@ export default function Home() {
           <button type="button" className={styles.continueButton} onClick={compareCrops}>
             Compare crop rotations
           </button>
+          <h3 className={styles.healthTitle}>Field health</h3>
+          <ul className={threatStyles.rows}>
+            {summary.threats.map((t) => (
+              <ThreatRow key={t.id} threat={t} />
+            ))}
+          </ul>
+          <details className={styles.more}>
+            <summary>Show the numbers</summary>
           <div className={styles.cards}>
             {summary.threats.map((t) => (
               <ThreatCard
@@ -440,6 +449,7 @@ export default function Home() {
               />
             ))}
           </div>
+          </details>
           <details className={styles.more}>
             <summary>Monthly weather history</summary>
             {strip ? (

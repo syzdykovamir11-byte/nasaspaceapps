@@ -97,6 +97,31 @@ export const THREAT_TITLE: Record<ThreatResult["id"], string> = {
   soil: COPY.soil.title,
 };
 
+/** Filled segments out of 4 for each level. A picture of the level word, not a new measurement. */
+const LEVEL_SEGMENTS: Record<Level, number> = { normal: 4, watch: 2, unusual: 1 };
+
+/** One compact line for the "Field health" list: title, level bar, level word, value and definition. */
+export function ThreatRow({ threat }: { threat: ThreatResult }) {
+  const c = COPY[threat.id];
+  const r = threat.ranking;
+  const filled = LEVEL_SEGMENTS[r.level];
+  return (
+    <li className={`${styles.row} ${styles[r.level]}`}>
+      <div className={styles.rowHead}>
+        <h3 className={styles.rowTitle}>{c.title}</h3>
+        <span className={styles.segments} role="img" aria-label={`${LEVEL_WORD[r.level]} for this place`}>
+          {[1, 2, 3, 4].map((i) => (
+            <span key={i} className={i <= filled ? styles.segOn : styles.segOff} />
+          ))}
+        </span>
+      </div>
+      <p className={styles.rowText}>
+        <span className={styles.rowWord}>{LEVEL_WORD[r.level]}</span> · {c.format(r.value)} {c.metricUnit(r.value)}. {c.description}
+      </p>
+    </li>
+  );
+}
+
 export function ThreatCard({ threat, summary, series, onPickYear, frostDates, frostPeriod }: Props) {
   const actions = ACTIONS[threat.id];
   const c = COPY[threat.id];

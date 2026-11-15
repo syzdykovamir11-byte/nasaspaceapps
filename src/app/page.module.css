@@ -321,3 +321,6 @@
 .more summary { min-height: 44px; padding: var(--space-2) 0; color: var(--accent); cursor: pointer; }
 .more summary:hover { text-decoration: underline; }
 .more summary:active { opacity: 0.8; }
+
+.healthTitle { margin: 0 0 var(--space-2); font-size: var(--step-1); }
+.more .cards { margin-top: var(--space-2); }
