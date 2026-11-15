@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { formatWindow } from "@/lib/indices/format";
 import type { Level } from "@/lib/indices/rank";
@@ -488,7 +489,10 @@ export default function Home() {
     <div className={styles.app}>
       <aside className={`${styles.panel} ${styles.left}`} aria-label="Places and map settings">
         <header className={styles.header}>
-          <h1>Field Tracker</h1>
+          <div className={styles.headerRow}>
+            <h1>Field Tracker</h1>
+            <ThemeSwitch />
+          </div>
           <p className={styles.lead}>Weather history for crop planning.</p>
         </header>
         {placesBlock}

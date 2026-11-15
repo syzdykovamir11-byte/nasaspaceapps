@@ -1,5 +1,6 @@
 "use client";
 
+import { THEME_EVENT } from "@/lib/theme";
 import "leaflet/dist/leaflet.css";
 import type { Feature, FeatureCollection } from "geojson";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
@@ -302,18 +303,17 @@ export default function PointMap({
   onZoom,
   fill = false,
 }: MapProps) {
-  // Re-render when the OS colour scheme changes, so marker colours follow the theme without a reload.
+  // Re-render when the Light / Dark switch changes, so marker colours follow the theme without a reload.
   const [scheme, setScheme] = useState(0);
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = () => setScheme((n) => n + 1);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    window.addEventListener(THEME_EVENT, onChange);
+    return () => window.removeEventListener(THEME_EVENT, onChange);
   }, []);
   // Leaflet writes marker colours as SVG attributes, so read the theme tokens (again only when the scheme changes).
   const { ink, accent, surface } = useMemo(
     () => ({ ink: cssVar("--text", "#1f2a1f"), accent: cssVar("--accent", "#2f6b3a"), surface: cssVar("--surface", "#ffffff") }),
-    // `scheme` is the trigger: the CSS variables change with the OS theme, which React cannot see.
+    // `scheme` is the trigger: the CSS variables change with the theme switch, which React cannot see.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [scheme],
   );

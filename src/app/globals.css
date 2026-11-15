@@ -49,33 +49,33 @@
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --dur: 200ms;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --page: #0e120d;
-    --bg: #2c352a;
-    --surface: #1f251e;
-    --card: #262e24;
-    --shadow: 0 10px 30px rgb(0 0 0 / 0.5);
-    --text: #e8ece4;
-    --muted: #a6b0a2;
-    --border: #364034;
-    --accent: #8cc897;
-    --normal: #8cc897;
-    --normal-bg: #22331f;
-    --watch: #e8b95a;
-    --watch-bg: #3a2f17;
-    --unusual: #f09389;
-    --unusual-bg: #3d1f1b;
-    --map-water: #1a2226;
-    --map-land: #262e24;
-    --map-land-other: #20251f;
-    --map-border: #6f7a6b;
-    --control-border: #6f7a6b;
-    --data-rain: #7fb3c9;
-  }
+/* Dark theme: chosen with the Light / Dark switch (src/lib/theme.ts). Light is the default. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0e120d;
+  --bg: #2c352a;
+  --surface: #1f251e;
+  --card: #262e24;
+  --shadow: 0 10px 30px rgb(0 0 0 / 0.5);
+  --text: #e8ece4;
+  --muted: #a6b0a2;
+  --border: #364034;
+  --accent: #8cc897;
+  --normal: #8cc897;
+  --normal-bg: #22331f;
+  --watch: #e8b95a;
+  --watch-bg: #3a2f17;
+  --unusual: #f09389;
+  --unusual-bg: #3d1f1b;
+  --map-water: #1a2226;
+  --map-land: #262e24;
+  --map-land-other: #20251f;
+  --map-border: #6f7a6b;
+  --control-border: #6f7a6b;
+  --data-rain: #7fb3c9;
 }
 
 @media (prefers-reduced-motion: reduce) {
